@@ -1,97 +1,47 @@
-#!/usr/bin/env python3
-import os
-import sys
-import time
+import subprocess
 from datetime import datetime
 
-# -------------------------------
-# Utility Functions
-# -------------------------------
+TARGET = "http://testphp.vulnweb.com/"
+REPORT_FILE = "report.txt"
 
-def banner():
-    print("=" * 70)
-    print("        VAST - Vulnerability Assessment Scanner Tool")
-    print("        Author : Security Learner")
-    print("        Use    : Educational Purpose Only")
-    print("=" * 70)
+def run_scan():
+    """
+    Executes Nikto scan on the target
+    """
+    command = ["nikto", "-h", TARGET]
 
-
-def check_tool(tool_name):
-    """Check if tool is installed"""
-    return os.system(f"which {tool_name} > /dev/null 2>&1") == 0
-
-
-def save_report(tool, target, output):
-    filename = f"reports/{tool}_{target}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-    with open(filename, "w") as f:
-        f.write(output)
-    print(f"\n[+] Report saved as: {vast}")
-
-
-def run_command(command):
     try:
-        stream = os.popen(command)
-        return stream.read()
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True
+        )
+        return result.stdout, result.stderr
     except Exception as e:
-        return str(e)
+        return "", str(e)
 
+def generate_report(output, error):
+    with open(REPORT_FILE, "w") as report:
+        report.write("VULNERABILITY SCAN REPORT\n")
+        report.write("=" * 40 + "\n")
+        report.write(f"Target     : {TARGET}\n")
+        report.write(f"Scan Tool  : Nikto\n")
+        report.write(f"Date       : {datetime.now()}\n\n")
 
-# -------------------------------
-# Scan Functions
-# -------------------------------
+        report.write("SCAN OUTPUT\n")
+        report.write("-" * 40 + "\n")
+        report.write(output if output else "No output\n")
 
-def nmap_scan():
-    if not check_tool("nmap"):
-        print("[!] Nmap is not installed")
-        return
+        report.write("\nERRORS\n")
+        report.write("-" * 40 + "\n")
+        report.write(error if error else "No errors\n")
 
-    target = input("Enter target IP/Domain:http://testphp.vulnweb.com/ ")
-    print("\n[+] Running Nmap Scan...\n")
-    command = f"nmap -sV -O {target}"
-    output = run_command(command)
-    print(output)
-    save_report("nmap", target.replace("/", "_"), output)
+    print("[+] Report generated: report.txt")
 
+def main():
+    print("[+] Starting scan on target:", TARGET)
+    output, error = run_scan()
+    generate_report(output, error)
 
-def nikto_scan():
-    if not check_tool("nikto"):
-        print("[!] Nikto is not installed")
-        return
-
-    target = input("Enter target URL (http://testphp.vulnweb.com/): ")
-    print("\n[+] Running Nikto Scan...\n")
-    command = f"nikto -h {target}"
-    output = run_command(command)
-    print(output)
-    save_report("nikto", target.replace("/", "_"), output)
-
-
-def whois_lookup():
-    if not check_tool("whois"):
-        print("[!] Whois is not installed")
-        return
-
-    target = input("Enter domain:http://testphp.vulnweb.com/ ")
-    print("\n[+] Running WHOIS Lookup...\n")
-    command = f"whois {target}"
-    output = run_command(command)
-    print(output)
-
-from datetime import datetime
-
-report = f"""
-Vulnerability Scan Report
-=========================
-Date: {datetime.now()}
-
-Target: example.com
-Status: Scan completed
-Issues Found: None
-"""
-
-with open("report.txt", "w") as f:
-    f.write(report)
-
-print("Report generated successfully")
-
-
+if __name__ == "__main__":
+    main()
