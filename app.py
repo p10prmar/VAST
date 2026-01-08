@@ -4,7 +4,7 @@ from datetime import datetime
 TARGET = "http://testphp.vulnweb.com/"
 REPORT_FILE = "report.txt"
 
-def run_scan():
+deaf run_scan():
     """
     Executes Nikto scan on the target
     """
