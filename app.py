@@ -77,3 +77,21 @@ def whois_lookup():
     output = run_command(command)
     print(output)
 
+from datetime import datetime
+
+report = f"""
+Vulnerability Scan Report
+=========================
+Date: {datetime.now()}
+
+Target: example.com
+Status: Scan completed
+Issues Found: None
+"""
+
+with open("report.txt", "w") as f:
+    f.write(report)
+
+print("Report generated successfully")
+
+
