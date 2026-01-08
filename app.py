@@ -25,7 +25,7 @@ def save_report(tool, target, output):
     filename = f"reports/{tool}_{target}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
     with open(filename, "w") as f:
         f.write(output)
-    print(f"\n[+] Report saved as: {filename}")
+    print(f"\n[+] Report saved as: {vast}")
 
 
 def run_command(command):
@@ -45,7 +45,7 @@ def nmap_scan():
         print("[!] Nmap is not installed")
         return
 
-    target = input("Enter target IP/Domain: ")
+    target = input("Enter target IP/Domain:http://testphp.vulnweb.com/ ")
     print("\n[+] Running Nmap Scan...\n")
     command = f"nmap -sV -O {target}"
     output = run_command(command)
@@ -58,7 +58,7 @@ def nikto_scan():
         print("[!] Nikto is not installed")
         return
 
-    target = input("Enter target URL (http://example.com): ")
+    target = input("Enter target URL (http://testphp.vulnweb.com/): ")
     print("\n[+] Running Nikto Scan...\n")
     command = f"nikto -h {target}"
     output = run_command(command)
@@ -71,7 +71,7 @@ def whois_lookup():
         print("[!] Whois is not installed")
         return
 
-    target = input("Enter domain: ")
+    target = input("Enter domain:http://testphp.vulnweb.com/ ")
     print("\n[+] Running WHOIS Lookup...\n")
     command = f"whois {target}"
     output = run_command(command)
